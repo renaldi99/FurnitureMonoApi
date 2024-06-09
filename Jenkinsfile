@@ -5,9 +5,21 @@ pipeline {
         }
     }
     stages {
-        stage("Run") {
+        stage("Build") {
             steps {
-                echo("Run with pipeline")
+                echo("Build with pipeline")
+            }
+        }
+        
+        stage("Test") {
+            steps {
+                echo("Test with pipeline")
+            }
+        }
+
+        stage("Deploy") {
+            steps {
+                echo("Deploy with pipeline")
             }
         }
     }
