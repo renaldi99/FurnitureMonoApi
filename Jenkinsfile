@@ -22,6 +22,13 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo("Deploy with pipeline")
+                script {
+                    if(fileExists('Dockerfile')) {
+                        echo "Dockerfile is found"
+                    }
+                }
+                echo("Deploy success pipeline")
+        }
             }
         }
     }
