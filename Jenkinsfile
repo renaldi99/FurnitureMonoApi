@@ -8,6 +8,8 @@ pipeline {
         stage("Build") {
             steps {
                 echo("Build with pipeline")
+                sleep(10)
+                echo("Finish build pipeline")
             }
         }
         
