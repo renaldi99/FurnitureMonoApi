@@ -11,4 +11,18 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            echo "I always to run this pipeline"
+        }
+        success {
+            echo "Pipeline is success"
+        }
+        failure {
+            echo "Pipeline is failed"
+        }
+        cleanup {
+            echo "Don't care success or error"
+        }
+    }
 }
