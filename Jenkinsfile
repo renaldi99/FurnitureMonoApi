@@ -24,11 +24,9 @@ pipeline {
                 echo("Deploy with pipeline")
                 script {
                     if(fileExists('Dockerfile')) {
-                        echo "Dockerfile is found"
+                        echo "Dockerfile is"
                     }
                 }
-                echo("Deploy success pipeline")
-        }
             }
         }
     }
