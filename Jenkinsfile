@@ -15,6 +15,7 @@ pipeline {
         
         stage("Test") {
             steps {
+                sh("error")
                 echo("Test with pipeline")
             }
         }
@@ -24,7 +25,7 @@ pipeline {
                 echo("Deploy with pipeline")
                 script {
                     if(fileExists('Dockerfile')) {
-                        echo "Dockerfile is"
+                        echo "Dockerfile is found"
                     }
                 }
             }
