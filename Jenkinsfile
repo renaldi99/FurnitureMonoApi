@@ -5,17 +5,15 @@ pipeline {
         }
     }
     stages {
-        stage('Branch') {
-            echo "Created by ${env.SERVER_NAME}"
-            if (env.BRANCH_NAME == 'master') {
-                echo 'this project master'
-            } else  {
-                echo 'this project other branch'
-            }
-        }
-
         stage("Build") {
             steps {
+                echo("Created by ${env.SERVER_NAME}")
+                if (env.BRANCH_NAME == 'master') {
+                    echo 'this project master'
+                } else  {
+                    echo 'this project other branch'
+                }
+
                 script {
                     // code groovy
                     for(int i = 0; i < 5; i++) {
