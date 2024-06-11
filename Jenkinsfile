@@ -7,7 +7,15 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                sh('dotnet build --configuration Release')
+
+                script {
+                    // code groovy
+                    for(int i = 0; i < 5; i++) {
+                        echo("display ${i}")
+                    }
+                }
+
+                // sh('dotnet build --configuration Release')
                 echo("Start Build")
                 sleep(10)
                 echo("Finish Build")
