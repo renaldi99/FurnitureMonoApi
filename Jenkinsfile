@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                sh('dotnet build FurnitureMonoApi.sln --configuration Release --no-restore')
+                sh('dotnet build --configuration Release')
                 echo("Start Build")
                 sleep(10)
                 echo("Finish Build")
