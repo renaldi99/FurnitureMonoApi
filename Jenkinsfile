@@ -15,7 +15,7 @@ pipeline {
         
         stage("Test") {
             steps {
-                sh("error")
+                // sh("error")
                 echo("Test with pipeline")
             }
         }
