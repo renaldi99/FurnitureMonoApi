@@ -42,9 +42,9 @@ pipeline {
                     }
 
                     if (env.BRANCH_NAME == 'master') {
-                        echo 'this project master'
+                        echo "this branch ${env.BRANCH_NAME}"
                     } else  {
-                        echo 'this project other branch'
+                        echo "this branch ${env.BRANCH_NAME}"
                     }
                 }
             }
