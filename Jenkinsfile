@@ -24,6 +24,10 @@ pipeline {
         
         stage("Test") {
             steps {
+                script {
+                    def data = ["row_id": "001", "job_name": "furnimonoapi"]
+                    writeJSON file: 'data.json', json: data
+                }
                 // sh("error")
                 echo("Start Test")
                 echo("Finish Test")
