@@ -7,16 +7,18 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                echo("Build with pipeline")
+                sh('dotnet build FurnitureMonoApi.sln --configuration Release --no-restore')
+                echo("Start Build")
                 sleep(10)
-                echo("Finish build pipeline")
+                echo("Finish Build")
             }
         }
         
         stage("Test") {
             steps {
                 // sh("error")
-                echo("Test with pipeline")
+                echo("Start Test")
+                echo("Finish Test")
             }
         }
 
