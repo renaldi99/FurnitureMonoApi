@@ -1,7 +1,7 @@
 pipeline {
     agent {
         node {
-            label "linux && java11 && dotnet6"
+            label "master && dotnet6"
         }
     }
     stages {
