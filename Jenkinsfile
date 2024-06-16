@@ -38,6 +38,7 @@ pipeline {
                 echo("Deploy with pipeline")
 
                 def props = readJSON file: 'dataqu.json'
+                assert props['domain-expansion'] == 'quantela'
                 echo("domain: ${props['domain-expansion']}")
 
                 script {
