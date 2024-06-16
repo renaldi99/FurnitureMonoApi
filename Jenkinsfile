@@ -21,7 +21,8 @@ pipeline {
 
                 echo("Author: ${AUTHOR}")
                 echo("Username credential: ${APP_USR}")
-                echo("Password credential: ${APP_PSW}")
+                // echo("Password credential: ${APP_PSW}")
+                sh('echo "Password credential: $APP_PSW" > "crendetial.txt"') // cara store credential ke file agar yang aman
 
                 // sh('dotnet build --configuration Release')
                 echo("Start Build")
