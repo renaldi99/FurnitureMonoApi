@@ -37,10 +37,6 @@ pipeline {
             steps {
                 echo("Deploy with pipeline")
 
-                def props = readJSON file: 'dataqu.json'
-                assert props['domain-expansion'] == 'quantela'
-                echo("domain: ${props['domain-expansion']}")
-
                 script {
                     if(fileExists('Dockerfile')) {
                         echo "Dockerfile is found"
@@ -51,6 +47,10 @@ pipeline {
                     } else  {
                         echo "this branch ${env.BRANCH_NAME}"
                     }
+
+                    def props = readJSON file: 'dataqu.json'
+                    assert props['domain-expansion'] == 'quantela'
+                    echo("domain: ${props['domain-expansion']}")
                 }
             }
         }
