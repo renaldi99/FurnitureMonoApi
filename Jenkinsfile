@@ -1,4 +1,7 @@
 pipeline {
+    environment {
+        AUTHOR = "Renaldi"
+    }
     agent {
         node {
             label "linux && dotnet6"
@@ -6,6 +9,7 @@ pipeline {
     }
     stages {
         stage("Build") {
+            echo "${AUTHOR}"
             steps {
                 script {
                     // code groovy
