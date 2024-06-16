@@ -10,7 +10,6 @@ pipeline {
     stages {
         stage("Build") {
             steps {
-                echo("Author: ${AUTHOR}")
 
                 script {
                     // code groovy
@@ -18,6 +17,8 @@ pipeline {
                         echo("display ${i}")
                     }
                 }
+
+                echo("Author: ${AUTHOR}")
 
                 // sh('dotnet build --configuration Release')
                 echo("Start Build")
