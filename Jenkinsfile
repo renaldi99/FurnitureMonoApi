@@ -1,6 +1,7 @@
 pipeline {
     environment {
-        AUTHOR = "Renaldi"
+        AUTHOR = "Renaldi" // env variable
+        APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
     agent {
         node {
@@ -19,6 +20,8 @@ pipeline {
                 }
 
                 echo("Author: ${AUTHOR}")
+                echo("Username credential: ${APP_USR}")
+                echo("Password credential: ${APP_PSW}")
 
                 // sh('dotnet build --configuration Release')
                 echo("Start Build")
