@@ -9,8 +9,9 @@ pipeline {
     }
     stages {
         stage("Build") {
-            echo "${AUTHOR}"
             steps {
+                echo("Author: ${AUTHOR}")
+
                 script {
                     // code groovy
                     for(int i = 0; i < 5; i++) {
