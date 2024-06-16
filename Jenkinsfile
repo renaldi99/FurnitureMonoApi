@@ -1,7 +1,7 @@
 pipeline {
     agent {
         node {
-            label "master && dotnet6"
+            label "linux && dotnet6"
         }
     }
     stages {
@@ -36,6 +36,10 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo("Deploy with pipeline")
+
+                def props = readJSON file: 'dataqu.json'
+                echo("domain: ${props['domain-expansion']}")
+
                 script {
                     if(fileExists('Dockerfile')) {
                         echo "Dockerfile is found"
