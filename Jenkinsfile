@@ -15,7 +15,8 @@ pipeline {
     }
 
     triggers {
-        cron("* * * * *")
+        // cron("* * * * *")
+        pollSCM('* * * * *')
     }
 
     agent {
