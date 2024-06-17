@@ -3,6 +3,13 @@ pipeline {
         AUTHOR = "Renaldi" // env variable
         APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
+
+    options {
+        disableConcurrentBuilds() // tidak bisa jalan / build paralel (bareng) note: awalnya bisa, jika pake ini sudah tidak bisa
+        timeout(time: 10, unit: "SECONDS") // aborted / dibatalkan jika lewat
+
+    }
+
     agent {
         node {
             label "linux && dotnet6"
