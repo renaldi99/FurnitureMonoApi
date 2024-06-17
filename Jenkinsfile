@@ -14,6 +14,10 @@ pipeline {
         string(name: 'DEPLOY_ENV', defaultValue: 'staging', description: 'Deploy environtment')
     }
 
+    triggers {
+        cron("* * * * *")
+    }
+
     agent {
         node {
             label "linux && dotnet6"
