@@ -10,12 +10,31 @@ pipeline {
 
     }
 
+    parameters {
+        string(name: 'DEPLOY_ENV', defaultValue: 'staging', description: 'Deploy environtment')
+    }
+
     agent {
         node {
             label "linux && dotnet6"
         }
     }
+
     stages {
+
+        stage("Parameter") {
+            echo "deploy env: ${params.DEPLOY_ENV}"
+        }
+
+        stage("Prepare") {
+            steps {
+                echo("Author: ${AUTHOR}")
+                echo("Username credential: ${APP_USR}")
+                // echo("Password credential: ${APP_PSW}")
+                sh('echo "Password credential: $APP_PSW" > "crendetial.txt"') // cara store credential ke file agar yang aman
+            }
+        }
+
         stage("Build") {
             steps {
 
@@ -25,11 +44,6 @@ pipeline {
                         echo("display ${i}")
                     }
                 }
-
-                echo("Author: ${AUTHOR}")
-                echo("Username credential: ${APP_USR}")
-                // echo("Password credential: ${APP_PSW}")
-                sh('echo "Password credential: $APP_PSW" > "crendetial.txt"') // cara store credential ke file agar yang aman
 
                 // sh('dotnet build --configuration Release')
                 echo("Start Build")
