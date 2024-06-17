@@ -23,7 +23,9 @@ pipeline {
     stages {
 
         stage("Parameter") {
-            echo "deploy env: ${params.DEPLOY_ENV}"
+            steps {
+                echo "deploy env: ${params.DEPLOY_ENV}"
+            }
         }
 
         stage("Prepare") {
