@@ -6,7 +6,7 @@ pipeline {
 
     options {
         disableConcurrentBuilds() // tidak bisa jalan / build paralel (bareng) note: awalnya bisa, jika pake ini sudah tidak bisa
-        timeout(time: 10, unit: "SECONDS") // aborted / dibatalkan jika lewat
+        timeout(time: 10, unit: "MINUTES") // aborted / dibatalkan jika lewat
 
     }
 
