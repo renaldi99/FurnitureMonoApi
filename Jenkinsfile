@@ -83,7 +83,7 @@ pipeline {
                 ok "Yes, of course"
                 submitter "renaldi"
                 parameters {
-                    string(name: 'DEPLOY', choices: ['DEV', 'UAT', 'PROD'], description: 'Deploy ENV')
+                    choice(name: 'DEPLOY', choices: ['DEV', 'UAT', 'PROD'], description: 'Deploy ENV')
                 }
             }
 
