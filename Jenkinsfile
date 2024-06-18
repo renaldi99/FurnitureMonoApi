@@ -108,6 +108,13 @@ pipeline {
                 }
             }
         }
+
+        stage("Release") {
+            when { environment name: 'AUTHOR', value: 'Renaldi' } // contoh aja :D
+            steps {
+                echo("Release it")
+            }
+        }
     }
     post {
         always {
