@@ -1,24 +1,29 @@
 pipeline {
+    // bisa ditaruh spesifik stage
     environment {
         AUTHOR = "Renaldi" // env variable
         APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
 
+    // bagian dari configure pipeline
     options {
         disableConcurrentBuilds() // tidak bisa jalan / build paralel (bareng) note: awalnya bisa, jika pake ini sudah tidak bisa
         timeout(time: 10, unit: "MINUTES") // aborted / dibatalkan jika lewat
 
     }
 
+    // bisa ditaruh spesifik stage
     parameters {
         string(name: 'DEPLOY_ENV', defaultValue: 'staging', description: 'Deploy environtment')
     }
 
+    // bagian dari configure pipeline
     triggers {
         // cron("* * * * *")
         pollSCM('* * * * *')
     }
 
+    // bisa ditaruh spesifik stage
     agent {
         node {
             label "linux && dotnet6"
@@ -29,7 +34,8 @@ pipeline {
 
         stage("Parameter") {
             steps {
-                echo "deploy env: ${params.DEPLOY_ENV}"
+                // jika global ambil menggunakan params jika parameter didalam stage tidak perlu pake params
+                echo "Deploy env: ${params.DEPLOY_ENV}" 
             }
         }
 
@@ -72,8 +78,18 @@ pipeline {
         }
 
         stage("Deploy") {
+            input {
+                message "Deploy project now?"
+                ok "Yes, of course"
+                submitter "renaldi"
+                parameters {
+                    string(name: 'DEPLOY', choices: ['DEV', 'UAT', 'PROD'], description: 'Deploy ENV')
+                }
+            }
+
             steps {
-                echo("Deploy with pipeline")
+
+                echo("Target ENV Param di stage: ${DEPLOY}")
 
                 script {
                     if(fileExists('Dockerfile')) {
