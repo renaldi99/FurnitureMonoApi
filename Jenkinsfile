@@ -1,7 +1,7 @@
 pipeline {
     // bisa ditaruh spesifik stage
     environment {
-        AUTHOR = "Renaldi" // env variable
+        AUTHOR = "Rei" // env variable
         APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
 
