@@ -1,7 +1,7 @@
 pipeline {
     // bisa ditaruh spesifik stage
     environment {
-        AUTHOR = "Rei" // env variable
+        AUTHOR = "Renaldi" // env variable
         APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
 
@@ -31,6 +31,22 @@ pipeline {
     }
 
     stages {
+
+        stage("Preparation") {
+            stages {
+                stage("Prepare Dotnet") {
+                    steps {
+                        echo "Step Prepare Dotnet"
+                    }
+                }
+
+                stage("Prepare Docker") {
+                    steps {
+                        echo "Step Prepare Docker"
+                    }
+                }
+            }
+        }
 
         stage("Parameter") {
             steps {
