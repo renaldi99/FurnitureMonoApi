@@ -33,10 +33,13 @@ pipeline {
     stages {
 
         stage("Preparation") {
-            stages {
+            // setelah menggunakan parralel tidak dapat menambahkan agent node diatasnya
+            // stages {} 
+            parallel {
                 stage("Prepare Dotnet") {
                     steps {
                         echo "Step Prepare Dotnet"
+                        sleep(5)
                     }
                 }
 
