@@ -32,6 +32,29 @@ pipeline {
 
     stages {
 
+        stage("Setup OS Matrix") {
+            matrix {
+                axes {
+                    axis {
+                        name "OS"
+                        values "linux", "windows"
+                    }
+                    axis {
+                        name "ARC"
+                        values "32", "64"
+                    }
+                }
+
+                stages {
+                    stage("Setup OS") {
+                        steps {
+                            echo "Setup ${OS}:${ARC}"
+                        }
+                    }
+                }
+            }
+        }
+
         stage("Preparation") {
             // setelah menggunakan parralel tidak dapat menambahkan agent node diatasnya
             // stages {} 
