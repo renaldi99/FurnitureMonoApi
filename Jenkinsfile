@@ -44,7 +44,7 @@ pipeline {
                         values "32", "64"
                     }
                 }
-                
+
                 excludes {
                     exclude {
                         // nanti yang OS linux dengan 32 bit tidak akan dibuat
@@ -168,6 +168,14 @@ pipeline {
         stage("Release") {
             when { environment name: 'AUTHOR', value: 'Renaldi' } // contoh aja :D
             steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "try_env_credential",
+                    usernameVariable: "USER",
+                    passwordVariable: "PASSWORD "
+
+                )]) {
+                    sh('echo "credential with -u $USER -p $PASSWORD" > "release.txt"')
+                }
                 echo("Release it")
             }
         }
