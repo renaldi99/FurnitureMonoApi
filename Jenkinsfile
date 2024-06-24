@@ -44,25 +44,26 @@ pipeline {
                         values "32", "64"
                     }
                 }
+                
+                excludes {
+                    exclude {
+                        // nanti yang OS linux dengan 32 bit tidak akan dibuat
+                        axis {
+                            name 'OS'
+                            values 'linux'
+                        }
+                        axis {
+                            name 'ARC'
+                            values '32'
+                        }
+                    }
+                }
 
                 stages {
                     stage("Setup OS") {
                         steps {
                             echo "Setup ${OS}:${ARC}"
                         }
-                    }
-                }
-            }
-            excludes {
-                exclude {
-                    // nanti yang OS linux dengan 32 bit tidak akan dibuat
-                    axis {
-                        name 'OS'
-                        values 'linux'
-                    }
-                    axis {
-                        name 'ARC'
-                        values '32'
                     }
                 }
             }
