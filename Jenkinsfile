@@ -53,6 +53,19 @@ pipeline {
                     }
                 }
             }
+            excludes {
+                exclude {
+                    // nanti yang OS linux dengan 32 bit tidak akan dibuat
+                    axis {
+                        name 'OS'
+                        values 'linux'
+                    }
+                    axis {
+                        name 'ARC'
+                        values '32'
+                    }
+                }
+            }
         }
 
         stage("Preparation") {
