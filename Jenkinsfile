@@ -96,7 +96,17 @@ pipeline {
         }
 
         stage("Prepare") {
+            agent {
+                node {
+                    docker {
+                        image 'node:20.15.0-alpine3.20'
+                    }
+                }
+            }
+
             steps {
+                sh 'node --version'
+                
                 echo("Author: ${AUTHOR}")
                 echo("Username credential: ${APP_USR}")
                 // echo("Password credential: ${APP_PSW}")
