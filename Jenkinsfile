@@ -24,11 +24,7 @@ pipeline {
     }
 
     // bisa ditaruh spesifik stage
-    agent {
-        node {
-            label "linux && dotnet6"
-        }
-    }
+    agent none
 
     stages {
 
