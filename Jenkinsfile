@@ -5,7 +5,7 @@ pipeline {
         APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
 
-    // bagian dari configure pipeline
+    // bagian sdari configure pipeline
     options {
         disableConcurrentBuilds() // tidak bisa jalan / build paralel (bareng) note: awalnya bisa, jika pake ini sudah tidak bisa
         timeout(time: 10, unit: "MINUTES") // aborted / dibatalkan jika lewat
@@ -24,7 +24,7 @@ pipeline {
     }
 
     // bisa ditaruh spesifik stage
-    agent none
+    agent any
 
     stages {
 
