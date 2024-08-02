@@ -1,6 +1,16 @@
 pipeline {
     environment {
-        AUTHOR = "RENALDI"
+        DOCKER_IMAGE_NAME = "furniapp-image"
+        DOCKER_IMAGE_TAG = "1.0"
+    }
+
+    options {
+        disableConcurrentBuilds()
+        timeout(time: 10, unit: "MINUTES")
+    }
+
+    triggers {
+        pollSCM('* * * * *')
     }
 
     agent {
@@ -12,19 +22,31 @@ pipeline {
     stages {
         stage("Prepare") {
             steps {
-                echo "Prepare for build project and deploy as a container"
+                echo "No action needed this stage"
             }
         }
 
-        stage("Build") {
+        stage("Build Project") {
             steps {
-                echo "Build this image"
+                sh "dotnet restore"
+                sh "dotnet build -c Release"
+                sh "dotnet publish -c Release -o out"
+            }
+        }
+
+        stage("Build Image") {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
             }
         }
 
         stage("Deploy") {
             steps {
                 echo "Deploy to container"
+
+                sh """
+                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                """
             }   
         }
     }
