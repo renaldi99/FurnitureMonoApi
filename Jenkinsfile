@@ -23,7 +23,9 @@ pipeline {
         }
 
         stage("Deploy") {
-            echo "Deploy to container"
+            steps {
+                echo "Deploy to container"
+            }   
         }
     }
 
