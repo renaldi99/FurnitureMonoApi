@@ -2,6 +2,7 @@ pipeline {
     environment {
         DOCKER_IMAGE_NAME = "furniapp-image"
         DOCKER_IMAGE_TAG = "1.0"
+        DOCKER_CONTAINER_NAME = "furniapp-container"
     }
 
     options {
@@ -44,9 +45,7 @@ pipeline {
             steps {
                 echo "Deploy to container"
 
-                sh """
-                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                """
+                sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }   
         }
     }
