@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
-                        docker.image("${DOCKER_IMAGE_NAME}:latest").push('latest')
+                        docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push("${DOCKER_IMAGE_TAG}")
                     }
                 }
             }
@@ -58,7 +58,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
-                        def image = docker.image("${DOCKER_IMAGE_NAME}:latest")
+                        def image = docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
                         image.pull()
                         // image.inside {
                         //     // Replace 'your-command-here' with commands you want to run inside the container
