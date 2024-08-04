@@ -3,6 +3,9 @@ pipeline {
         DOCKER_IMAGE_NAME = "furniapp-image"
         DOCKER_IMAGE_TAG = "1.0"
         DOCKER_CONTAINER_NAME = "furniapp-container"
+        REGISTRY = "185.199.52.89:8082"
+        REPOSITORY = "docker-repo"
+        CREDENTIALS_ID = "nexus"
     }
 
     options {
@@ -41,11 +44,35 @@ pipeline {
             }
         }
 
+        stage("Push Docker Image to Nexus") {
+            steps {
+                scripts {
+                    docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
+                        docker.image("${DOCKER_IMAGE_NAME}:latest").push('latest')
+                    }
+                }
+            }
+        }
+
+        stage("Pull Docker Image") {
+            steps {
+                scripts {
+                    docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
+                        def image = docker.image("${DOCKER_IMAGE_NAME}:latest")
+                        image.pull()
+                        // image.inside {
+                        //     // Replace 'your-command-here' with commands you want to run inside the container
+                        //     sh 'your-command-here'
+                        // }   
+                    }
+                }
+            }
+        }
+
         stage("Deploy") {
             steps {
                 echo "Deploy to container"
-
-                sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:latest"
             }   
         }
     }
