@@ -46,7 +46,7 @@ pipeline {
 
         stage("Push Docker Image to Nexus") {
             steps {
-                scripts {
+                script {
                     docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
                         docker.image("${DOCKER_IMAGE_NAME}:latest").push('latest')
                     }
@@ -56,7 +56,7 @@ pipeline {
 
         stage("Pull Docker Image") {
             steps {
-                scripts {
+                script {
                     docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
                         def image = docker.image("${DOCKER_IMAGE_NAME}:latest")
                         image.pull()
