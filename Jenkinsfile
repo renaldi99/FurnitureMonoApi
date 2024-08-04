@@ -57,6 +57,8 @@ pipeline {
         stage("Pull Docker Image") {
             steps {
                 script {
+                    // def imageExists = sh(script: "docker images -q ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", returnStdout: true).trim()
+
                     docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
                         def image = docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
                         image.pull()
@@ -72,7 +74,7 @@ pipeline {
         stage("Deploy") {
             steps {
                 echo "Deploy to container"
-                sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:latest"
+                sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
             }   
         }
     }
