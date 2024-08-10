@@ -77,20 +77,21 @@ pipeline {
 
         stage("Deploy") {
             steps {
+                script {
+                    // Destroy container existing and deploy new container if exists
+                    def containerRunning = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStatus: true).trim()
 
-                // Destroy container existing and deploy new container if exists
-                def containerRunning = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStatus: true).trim()
+                    if (containerRunning) {
+                        // Remove to deploy new
+                        sh "docker container stop ${DOCKER_CONTAINER_NAME}"
+                        sh "docker container rm ${DOCKER_CONTAINER_NAME}"
+                    }
 
-                if (containerRunning) {
-                    // Remove to deploy new
-                    sh "docker container stop ${DOCKER_CONTAINER_NAME}"
-                    sh "docker container rm ${DOCKER_CONTAINER_NAME}"
+                    echo "Deploy to container"
+                    sh '''
+                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                    '''
                 }
-
-                echo "Deploy to container"
-                sh '''
-                docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                '''
             }   
         }
     }
