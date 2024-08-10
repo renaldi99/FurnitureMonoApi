@@ -88,9 +88,7 @@ pipeline {
                     }
 
                     echo "Deploy to container"
-                    sh '''
-                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                    '''
+                    sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
                 }
             }   
         }
