@@ -79,7 +79,7 @@ pipeline {
             steps {
                 script {
                     // Destroy container existing and deploy new container if exists
-                    def containerRunning = sh(script: "docker ps -q -f name=${CONTAINER_NAME}", returnStatus: true).trim()
+                    def containerRunning = sh(script: "docker ps -q -f name=${DOCKER_CONTAINER_NAME}", returnStatus: true).trim()
 
                     if (containerRunning) {
                         // Remove to deploy new
@@ -88,7 +88,9 @@ pipeline {
                     }
 
                     echo "Deploy to container"
-                    sh "docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+                    sh '''
+                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                    '''
                 }
             }   
         }
