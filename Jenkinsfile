@@ -48,7 +48,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
-                        docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push("${DOCKER_IMAGE_TAG}")
+                        // docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push("${DOCKER_IMAGE_TAG}")
+                        sh "docker push ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
                     }
                 }
             }
@@ -63,6 +64,7 @@ pipeline {
                         echo "Image ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} already exists locally."
                     } else {
                         docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
+                            echo "Pull Image from Nexus"
                             def image = docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
                             image.pull()
                             // image.inside {
