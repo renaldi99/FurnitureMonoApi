@@ -63,10 +63,10 @@ pipeline {
         stage("Pull Docker Image") {
             steps {
                 script {
-                    def imageExists = sh(script: "docker images -q ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", returnStdout: true).trim()
+                    def imageExists = sh(script: "docker images -q ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", returnStdout: true).trim()
 
                     if (imageExists) {
-                        echo "Image ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} already exists locally."
+                        echo "Image already exists locally."
                     } else {
                         docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
                             echo "Pull Image from Nexus"
@@ -96,7 +96,7 @@ pipeline {
 
                     echo "Deploy to container"
                     sh '''
-                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
                     '''
                 }
             }   
