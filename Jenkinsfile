@@ -82,6 +82,30 @@ pipeline {
             }
         }
 
+        stage("Scan Docker Imaege") {
+            environment {
+                TRIVY_REPORT_PATH = "trivy-report.json"
+            }
+
+            steps {
+                sh '''
+                    trivy image --format json --output ${TRIVY_REPORT_PATH} ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                '''
+                script {
+                    def resultTrivy = readJSON file: "${TRIVY_REPORT_PATH}"
+
+                    if (resultTrivy.Vulnerabilities.size() > 0) {
+                        echo "Vulnerabilities found: ${report.Vulnerabilities.size()}"
+                        currentBuild.result = 'FAILURE'
+                        error("Trivy found vulnerabilities")
+                    } else {
+                        echo "No vulnerabilities found."
+                    }
+                    
+                }
+            }
+        }
+
         stage("Deploy") {
             steps {
                 script {
