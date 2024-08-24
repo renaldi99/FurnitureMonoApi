@@ -88,10 +88,10 @@ pipeline {
             }
 
             steps {
-                sh '''
-                    trivy image --format json --output ${TRIVY_REPORT_PATH} ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                '''
                 script {
+                    sh '''
+                        trivy image --format json --output ${TRIVY_REPORT_PATH} ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
+                    '''
                     def resultTrivy = readJSON file: "${TRIVY_REPORT_PATH}"
 
                     if (resultTrivy.Vulnerabilities.size() > 0) {
