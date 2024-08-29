@@ -92,12 +92,14 @@ pipeline {
                     def scanResultTrivy = sh(script:"trivy image --no-progress ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", returnStdout: true).trim()
 
                     echo "Trivy Scan Results:\n${scanResultTrivy}"
+                    def vulnerabilityCount = sh(script:"echo \"${scanResultTrivy}\" | grep -c 'Vulnerability'", returnStdout: true).trim()
+                    echo "Count: ${vulnerabilityCount}"
 
-                    if (scanResultTrivy.contains("VULNERABILITIES FOUND")) {
+                    if (vulnerabilityCount.toInteger() > 0) {
                         currentBuild.result = 'FAILURE'
-                        error("Trivy found vulnerabilities")
+                        error("Trivy found vulnerabilities. Aborting.")
                     } else {
-                        echo "No vulnerabilities found."
+                        echo "No vulnerabilities found. Proceeding..."
                     }
                     
                 }
@@ -108,7 +110,7 @@ pipeline {
             steps {
                 script {
                     // Destroy container existing and deploy new container if exists
-                    def containerRunning = sh(script: "docker ps -q -f name=${DOCKER_CONTAINER_NAME}", returnStdout: true).trim()
+                    def containerRunning = sh(script: "docker ps -a -q -f name=${DOCKER_CONTAINER_NAME}", returnStdout: true).trim()
 
                     if (containerRunning) {
                         // Remove to deploy new
