@@ -89,13 +89,11 @@ pipeline {
 
             steps {
                 script {
-                    sh '''
-                        trivy image --format json --output ${TRIVY_REPORT_PATH} ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                    '''
-                    def resultTrivy = readJSON file: "${TRIVY_REPORT_PATH}"
+                    def scanResultTrivy = sh(script:"trivy image --no-progress ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", returnStdout: true).trim()
 
-                    if (resultTrivy.Vulnerabilities.size() > 0) {
-                        echo "Vulnerabilities found: ${report.Vulnerabilities.size()}"
+                    echo "Trivy Scan Results:\n${scanResultTrivy}"
+
+                    if (scanResultTrivy.contains("VULNERABILITIES FOUND")) {
                         currentBuild.result = 'FAILURE'
                         error("Trivy found vulnerabilities")
                     } else {
