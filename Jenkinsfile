@@ -1,22 +1,29 @@
 pipeline {
+    // bisa ditaruh spesifik stage
     environment {
-        DOCKER_IMAGE_NAME = "furniapp-image"
-        DOCKER_IMAGE_TAG = "1.0"
-        DOCKER_CONTAINER_NAME = "furniapp-container"
-        REGISTRY = "185.199.52.89:8082"
-        REPOSITORY = "docker-repo"
-        CREDENTIALS_ID = "nexus"
+        AUTHOR = "Renaldi" // env variable
+        APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
 
+    // bagian dari configure pipeline
     options {
-        disableConcurrentBuilds()
-        timeout(time: 10, unit: "MINUTES")
+        disableConcurrentBuilds() // tidak bisa jalan / build paralel (bareng) note: awalnya bisa, jika pake ini sudah tidak bisa
+        timeout(time: 10, unit: "MINUTES") // aborted / dibatalkan jika lewat
+
     }
 
+    // bisa ditaruh spesifik stage
+    parameters {
+        string(name: 'DEPLOY_ENV', defaultValue: 'staging', description: 'Deploy environtment')
+    }
+
+    // bagian dari configure pipeline
     triggers {
+        // cron("* * * * *")
         pollSCM('* * * * *')
     }
 
+    // bisa ditaruh spesifik stage
     agent {
         node {
             label "master"
@@ -24,109 +31,129 @@ pipeline {
     }
 
     stages {
-        stage("Prepare") {
-            steps {
-                echo "No action needed this stage"
-            }
-        }
 
-        stage("Build Project") {
-            steps {
-                sh "dotnet restore"
-                sh "dotnet build -c Release"
-                sh "dotnet publish -c Release -o out"
-            }
-        }
-
-        stage("Build Image") {
-            steps {
-                sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} ."
-            }
-        }
-
-        stage("Push Docker Image to Nexus") {
-            steps {
-                script {
-                    docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
-                        docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}").push("${DOCKER_IMAGE_TAG}")
+        stage("Setup OS Matrix") {
+            matrix {
+                axes {
+                    axis {
+                        name "OS"
+                        values "linux", "windows"
+                    }
+                    axis {
+                        name "ARC"
+                        values "32", "64"
                     }
                 }
-            }
-            post {
-                cleanup {
-                    echo "clean image in local"
-                    sh "docker rmi ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
+
+                excludes {
+                    exclude {
+                        // nanti yang OS linux dengan 32 bit tidak akan dibuat
+                        axis {
+                            name 'OS'
+                            values 'linux'
+                        }
+                        axis {
+                            name 'ARC'
+                            values '32'
+                        }
+                    }
                 }
-            }
-        }
 
-        stage("Pull Docker Image") {
-            steps {
-                script {
-                    def imageExists = sh(script: "docker images -q ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", returnStdout: true).trim()
-
-                    if (imageExists) {
-                        echo "Image already exists locally."
-                    } else {
-                        docker.withRegistry("http://${REGISTRY}/repository/${REPOSITORY}", CREDENTIALS_ID) {
-                            echo "Pull Image from Nexus"
-                            def image = docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}")
-                            image.pull()
-                            // image.inside {
-                            //     // Replace 'your-command-here' with commands you want to run inside the container
-                            //     sh 'your-command-here'
-                            // }   
+                stages {
+                    stage("Setup OS") {
+                        steps {
+                            echo "Setup ${OS}:${ARC}"
                         }
                     }
                 }
             }
         }
 
-        stage("Scan Docker Imaege") {
-            environment {
-                TRIVY_REPORT_PATH = "trivy-report.json"
-            }
+        stage("Preparation") {
+            // setelah menggunakan parralel tidak dapat menambahkan agent node diatasnya
+            // stages {} 
+            parallel {
+                stage("Prepare Dotnet") {
+                    steps {
+                        echo "Step Prepare Dotnet"
+                        sleep(5)
+                    }
+                }
 
+                stage("Prepare Docker") {
+                    steps {
+                        echo "Step Prepare Docker"
+                    }
+                }
+            }
+        }
+
+        stage("Parameter") {
+            steps {
+                // jika global ambil menggunakan params 
+                // jika parameter didalam stage tidak perlu pake params
+                echo "Deploy env: ${params.DEPLOY_ENV}" 
+            }
+        }
+
+        stage("Prepare") {
+            steps {
+                echo("Prepare Image")
+            }
+        }
+
+        stage("Build") {
+            steps {
+
+                script {
+                    // code groovy
+                    for(int i = 0; i < 5; i++) {
+                        echo("display ${i}")
+                    }
+                }
+
+                // sh('dotnet build --configuration Release')
+                echo("Start Build")
+                sleep(10)
+                echo("Finish Build")
+            }
+        }
+        
+        stage("Test") {
             steps {
                 script {
-                    def scanResultTrivy = sh(script:"trivy image --no-progress ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", returnStdout: true).trim()
-
-                    echo "Trivy Scan Results:\n${scanResultTrivy}"
-                    def vulnerabilityCount = sh(script:"echo \"${scanResultTrivy}\" | grep -c 'Vulnerability'", returnStdout: true).trim()
-                    echo "Count: ${vulnerabilityCount}"
-
-                    if (vulnerabilityCount.toInteger() > 0) {
-                        currentBuild.result = 'FAILURE'
-                        error("Trivy found vulnerabilities. Aborting.")
-                    } else {
-                        echo "No vulnerabilities found. Proceeding..."
-                    }
-                    
+                    def data = ["row_id": "001", "job_name": "furnimonoapi"]
+                    writeJSON file: 'data.json', json: data
                 }
+                // sh("error")
+                echo("Start Test")
+                echo("Finish Test")
             }
         }
 
         stage("Deploy") {
-            steps {
-                script {
-                    // Destroy container existing and deploy new container if exists
-                    def containerRunning = sh(script: "docker ps -a -q -f name=${DOCKER_CONTAINER_NAME}", returnStdout: true).trim()
-
-                    if (containerRunning) {
-                        // Remove to deploy new
-                        sh "docker container stop ${DOCKER_CONTAINER_NAME} || true"
-                        sh "docker container rm ${DOCKER_CONTAINER_NAME} || true"
-                    }
-
-                    echo "Deploy to container"
-                    sh '''
-                    docker run -d --name ${DOCKER_CONTAINER_NAME} -p 9002:80 ${REGISTRY}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
-                    '''
+            input {
+                message "Deploy project now?"
+                ok "Yes, of course"
+                submitter "renaldi"
+                parameters {
+                    choice(name: 'DEPLOY', choices: ['DEV', 'UAT', 'PROD'], description: 'Deploy ENV')
                 }
-            }   
+            }
+
+            steps {
+
+                echo("Target ENV Param di stage: ${DEPLOY}")
+            }
+        }
+
+        stage("Release") {
+            when { environment name: 'AUTHOR', value: 'Renaldi' } // contoh aja :D
+            steps {
+                echo("Release it")
+            }
         }
     }
-
     post {
         always {
             echo "I always to run this pipeline"
