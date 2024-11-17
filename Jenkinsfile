@@ -2,7 +2,7 @@ pipeline {
     // bisa ditaruh spesifik stage
     environment {
         AUTHOR = "Renaldi" // env variable
-        APP = credentials("try_env_credential") // get credential by id from jenkins use this
+        //APP = credentials("try_env_credential") // get credential by id from jenkins use this
     }
 
     // bagian dari configure pipeline
