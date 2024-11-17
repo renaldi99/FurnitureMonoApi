@@ -24,11 +24,11 @@ pipeline {
     }
 
     // bisa ditaruh spesifik stage
-    agent {
-        node {
-            label "master"
-        }
-    }
+    // agent {
+    //     node {
+    //         label "master"
+    //     }
+    // }
 
     stages {
 
