@@ -24,9 +24,7 @@ pipeline {
     }
 
     // bisa ditaruh spesifik stage
-    agent {
-        any
-    }
+    agent any
 
     stages {
 
